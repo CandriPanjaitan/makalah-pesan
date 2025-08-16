@@ -1,0 +1,187 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Pesan Makalah</title>
+    <style>
+        body {
+            margin: 0;
+            padding: 0;
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            min-height: 100vh;
+            background: linear-gradient(135deg, #74ebd5 0%, #ACB6E5 100%);
+        }
+        .container {
+            width: 100%;
+            max-width: 600px;
+            background-color: #ffffff;
+            padding: 25px;
+            text-align: left;
+            box-sizing: border-box;
+            border-radius: 12px;
+            box-shadow: 0 8px 20px rgba(0,0,0,0.1);
+            animation: fadeIn 0.8s ease;
+        }
+        @keyframes fadeIn {
+            from {opacity: 0; transform: translateY(20px);}
+            to {opacity: 1; transform: translateY(0);}
+        }
+        h1 {
+            font-size: 26px;
+            margin-bottom: 10px;
+            color: #333;
+            text-align: center;
+        }
+        p {
+            font-size: 16px;
+            line-height: 1.6;
+            color: #555;
+            text-align: center;
+        }
+        b {
+            display: block;
+            margin: 10px 0;
+            text-align: center;
+            color: #222;
+        }
+        label {
+            margin-top: 15px;
+            font-weight: 600;
+            display: block;
+            color: #444;
+        }
+        input, textarea, select {
+            width: 100%;
+            padding: 12px;
+            margin-top: 8px;
+            border: 1px solid #ccc;
+            border-radius: 8px;
+            font-size: 15px;
+            transition: 0.3s;
+        }
+        input:focus, textarea:focus, select:focus {
+            border-color: #74ebd5;
+            outline: none;
+            box-shadow: 0 0 5px rgba(116,235,213,0.5);
+        }
+        textarea {
+            min-height: 80px;
+            resize: vertical;
+        }
+        button {
+            margin-top: 20px;
+            width: 100%;
+            padding: 12px;
+            font-size: 16px;
+            font-weight: bold;
+            background: linear-gradient(135deg, #74ebd5, #ACB6E5);
+            border: none;
+            border-radius: 8px;
+            color: #fff;
+            cursor: pointer;
+            transition: 0.3s;
+        }
+        button:hover {
+            opacity: 0.9;
+        }
+        .status {
+            margin-top: 15px;
+            text-align: center;
+            font-weight: bold;
+        }
+        .success {
+            color: green;
+        }
+        .error {
+            color: red;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1>Selamat Datang</h1>
+        <p>Halo, nama aku Candri. Jika kamu klik halaman ini, berarti kamu butuh bantuan Ngejoki yah!</p>
+        <b>Aku siap bantu kamu!</b>
+        <p>Isi data ini:</p>
+
+        <form id="orderForm">
+            <label>Nama kamu</label>
+            <input type="text" name="nama" placeholder="Masukkan nama kamu" required>
+
+            <label>Nomor WA kamu</label>
+            <input type="tel" name="wa" placeholder="Masukkan nomor WhatsApp kamu" required>
+
+            <label>Kasih tau</label>
+            <textarea name="deskripsi" placeholder="Jelaskan tentang apa" required></textarea>
+
+            <label>Berapa banyak</label>
+            <select name="jumlah">
+                <option>Tergantung</option>
+                <option>10 halaman</option>
+                <option>Maks (50 hal)</option>
+            </select>
+
+            <label>Bentuk</label>
+            <textarea name="bentuk" placeholder="Bergambar atau tidak? Jelaskan!"></textarea>
+
+            <label>Nama detail</label>
+            <textarea name="detail" placeholder="Jelaskan bagaimana aku harus bikin, biar tidak salah!"></textarea>
+
+            <label>Bentuk</label>
+            <select name="jenis">
+                <option>Print</option>
+                <option>Flashdisk</option>
+                <option>File</option>
+            </select>
+
+            <label>Pembayaran</label>
+            <select name="pembayaran">
+                <option>QR (Dana, OVO, Gopay) atau BTC</option>
+                <option>Cash</option>
+            </select>
+
+            <button type="submit">Kirim Data</button>
+        </form>
+
+        <div id="statusMessage" class="status"></div>
+
+        <p style="margin-top:20px; font-size:14px; color:#666; text-align:center;">
+            Memberika modal atau pembayaran pertama tergantung: 15k untuk 10 halaman, 20k untuk maks (50 halaman).<br>
+            Jika tidak mau rugi dan merugikan, <b>harap berikan dana pertama! Harap mengerti!</b>
+        </p>
+    </div>
+
+    <script>
+        document.getElementById("orderForm").addEventListener("submit", function(e){
+            e.preventDefault();
+            const formData = new FormData(this);
+            let message = "📌 *Pesanan Baru* %0A%0A";
+            formData.forEach((value, key) => {
+                message += `🔹 *${key}*: ${value}%0A`;
+            });
+
+            const token = "8475979708:AAFKyM7VyLwmxHxk35QCmYHINn08WHkHC8o"; 
+            const chatId = "7455263553"; 
+            const url = `https://api.telegram.org/bot${token}/sendMessage?chat_id=${chatId}&parse_mode=Markdown&text=${message}`;
+
+            fetch(url).then(response => {
+                if(response.ok){
+                    document.getElementById("statusMessage").innerHTML = "✅ Pesanan berhasil dikirim!";
+                    document.getElementById("statusMessage").className = "status success";
+                    document.getElementById("orderForm").reset();
+                } else {
+                    document.getElementById("statusMessage").innerHTML = "❌ Gagal mengirim pesanan.";
+                    document.getElementById("statusMessage").className = "status error";
+                }
+            }).catch(() => {
+                document.getElementById("statusMessage").innerHTML = "⚠️ Terjadi kesalahan saat mengirim.";
+                document.getElementById("statusMessage").className = "status error";
+            });
+        });
+    </script>
+</body>
+</html>
